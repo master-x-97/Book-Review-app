@@ -134,8 +134,26 @@ class BookController extends Controller
 
     }
     //this method will delete a book from page
-    public function destroy(){
+    public function destroy(Request $request){
+        $book = Book::find($request->id);
 
+        if($book==null){
+            session()->flash('error','Book not found');
+            return response()->json([
+                'status' =>false,
+                'message'=> 'Book not found'
+            ]);
+    }else{
+        File::delete(public_path('upload/books'.$book->image));
+        File::delete(public_path('upload/books/thumb/'.$book->image));
+        $book->delete();
+        
+        session()->flash('success','Book deleted successfully');
+        return response()->json([
+            'status' =>true,
+            'message'=> 'Book deleted successfully.'
+        ]);
     }
 
+}
 }
