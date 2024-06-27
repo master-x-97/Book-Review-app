@@ -2,10 +2,10 @@
     @if (Auth::user()->role == 'admin')
         
     <li class="nav-item">
-        <a href="{{route('books.index')}}">Books</a>                               
+        <a href="{{route('books.index')}}">Books </a>                               
     </li>
     <li class="nav-item">
-        <a href="reviews.html">Reviews</a>                               
+        <a href="/">Reviews</a>                               
     </li>
     @endif
     <li class="nav-item">
