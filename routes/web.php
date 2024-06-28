@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/',[HomeController::class,'index'])->name('home');
 Route::get('/book/{id}',[HomeController::class,'detail'])->name('book.detail');
+Route::post('/save-book-review',[HomeController::class,'saveReview'])->name('book.saveReview');
 
 
 
