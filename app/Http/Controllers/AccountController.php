@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-
+use App\Models\Review;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -97,7 +97,7 @@ public function updateProfile(Request $request){
     //here we will upload image
     if(!empty($request->image)){
 
-        // Delete old image  here 
+        // Delete old image  here  
         File::delete(public_path('uploads/profile/'.$user->image));
         File::delete(public_path('uploads/profile/thumb/'.$user->image));
 
@@ -126,6 +126,21 @@ public function updateProfile(Request $request){
 public function logout(){
     Auth::logout();
     return redirect()->route('account.login');
+}
+
+public function myReview( Request $request){
+    $reviews =Review::with('book')->where('user_id', Auth::user()->id);
+    $reviews = $reviews->orderBy('created_at', 'DESC');
+
+    if(!empty($request->keyword)){
+        $reviews=$reviews->where('review','like','%'.$request->keyword.'%');
+    }
+
+
+    $reviews=$reviews->paginate(10);
+    return view('account.my-reviews',[
+        'reviews' =>$reviews
+    ]);
 }
 
 
