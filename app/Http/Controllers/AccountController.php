@@ -128,7 +128,7 @@ public function logout(){
     return redirect()->route('account.login');
 }
 
-public function myReview( Request $request){
+public function myReviews( Request $request){
     $reviews =Review::with('book')->where('user_id', Auth::user()->id);
     $reviews = $reviews->orderBy('created_at', 'DESC');
 
@@ -138,9 +138,60 @@ public function myReview( Request $request){
 
 
     $reviews=$reviews->paginate(10);
-    return view('account.my-reviews',[
+    return view('account.my-reviews.my-reviews',[
         'reviews' =>$reviews
     ]);
+}
+public function editReview($id){
+    $review = Review::where([
+        'id' =>$id,
+        'user_id'=>Auth::user()->id
+    ])->with('book')->first();
+
+    return view('account.my-reviews.edit-review',[
+        'review' => $review
+    ]);
+}
+
+// this method will update a review
+public function updateReview($id, Request $request){
+    $review = Review::findOrFail($id);
+    $validator = Validator::make($request->all(),[
+        'review' =>'required',
+        'rating' => 'required'
+    ]);
+    if($validator->fails()){
+        return redirect()->route('account.myReviews.editReview', $id)->withErrors($validator)->withInput();
+    }
+    $review->review = $request->review;
+    $review->rating = $request->rating;
+    $review->save();
+
+    session()->flash('success','Review updated successfully');
+
+    return redirect()->route('account.myReviews');
+}
+
+public function deleteReview(Request $request){
+    $id= $request->id;
+
+    $review = Review::find($id);
+
+    if($review == null){
+        return response()->json([
+            'status'=>false
+        ]);
+    }
+
+    $review->delete();
+    session()->flash('success','Review deleted successfully');
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Review deleted successfully'
+        ]);
+    
+
 }
 
 

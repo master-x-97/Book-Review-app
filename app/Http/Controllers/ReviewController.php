@@ -30,7 +30,7 @@ class ReviewController extends Controller
         ]);
     }
 
-    //
+    // this method will update a review
     public function updateReview($id, Request $request){
         $review = Review::findOrFail($id);
         $validator = Validator::make($request->all(),[
